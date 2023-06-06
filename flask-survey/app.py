@@ -10,7 +10,6 @@ debug = DebugToolbarExtension(app)
 # =============================================================================
 # Global Variables
 responses = []
-fruits = []
 
 title = surveys["satisfaction"].title
 instructions = surveys["satisfaction"].instructions
