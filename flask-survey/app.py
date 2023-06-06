@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, session
 from flask_debugtoolbar import DebugToolbarExtension
 from surveys import surveys, Survey
 
@@ -10,6 +10,7 @@ debug = DebugToolbarExtension(app)
 # =============================================================================
 # Global Variables
 responses = []
+fruits = []
 
 title = surveys["satisfaction"].title
 instructions = surveys["satisfaction"].instructions
@@ -24,6 +25,7 @@ def welcome_user():
 
 @app.route("/redirect", methods=["GET", "POST"])
 def begin_survey():
+    session["responses"] = []
     return redirect("/question")
 
 @app.route("/question", methods=["GET", "POST"])
@@ -34,7 +36,7 @@ def get_question_num():
     if num > len(questions):
         flash("Invalid Number.")
         print("Invalid Number.")
-        responses = []
+        session["responses"] = []
         return redirect("/question")
 
     if num <= len(questions) - 1:
@@ -47,7 +49,7 @@ def get_question_num():
                 if len(responses) >= num and responses[num -1] == response:
                     pass
                 else:
-                    responses.append(response)
+                    session["responses"].append(response)
             except:
                 pass
         num += 1
@@ -84,3 +86,10 @@ if __name__ == "__main__":
 
 # Get q.Parameter for num in the back end (Sent by front end).
 # Need to handle query Parameter.
+
+# Here is the question in particular from my project's rubric page:
+#  "Storing answers in a list on the server has some problems. The biggest one is that there’s only one list – if two people try to answer the survey at the same time, they’ll be stepping on each others’ toes!
+
+# A better approach is to use the session to store response information, so that’s what we’d like to do next. If you haven’t learned about the session yet, move on to step 9 and come back to this later.
+
+# To begin, modify your start page so that clicking on the button fires off a POST request to a new route that will set session[“responses”] to an empty list. The view function should then redirect you to the start of the survey. (This will also take care of the issue mentioned at the end of Step Six.) Then, modify your code so that you reference the session when you’re trying to edit the list of responses."
